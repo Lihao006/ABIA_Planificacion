@@ -14,6 +14,9 @@
 
     ;; Predicados de filtro
     (lleno ?h - habitacion)
+    (vacio ?h - habitacion)
+    ;; una habitació que no esté llena ni vacía està parcialmente ocupada
+
     (servida ?r - reserva)
     )
 
@@ -87,7 +90,6 @@
         (asignado ?r ?h)
         (servida ?r)
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
-        (increase (asignaciones) 8)
         (increase (coste-habs) 4)
         (increase (coste-desperdicio)
                   (- (capacidad-hab ?h) (pers-reserva ?r))
@@ -96,6 +98,11 @@
         (when (= (capacidad-hab ?h) 0)
           (lleno ?h)
           (increase (hab-llenas) 1)
+        )
+
+        (when (vacio ?h)
+          (not (vacio ?h))
+          (increase (asignaciones) 8)
         )
       )
   )
