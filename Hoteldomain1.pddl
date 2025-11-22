@@ -14,11 +14,36 @@
     )
 
   (:functions
-    (capacidad_hab ?h - habitacion)
-    (pers_reserva ?r - reserva)
-    (dia_inicio ?r - reserva)
-    (dia_fin ?r - reserva)
+    (capacidad-hab ?h - habitacion)
+    (pers-reserva ?r - reserva)
+    (dia-inicio ?r - reserva)
+    (dia-fin ?r - reserva)
+    
+    ;; criterios a optimizar
+    (num-asignaciones)
+    (coste-desperdicio)
+    (coste-orien-incorrecta)
   )
   
-  (:)
+  (:action asignar-habitacion
+    :parameters (?r - reserva ?h - habitacion)
+    :precondition 
+      (and 
+        (not (servida ?r))
+        (not (lleno ?h))
+        (not (asignado ?r ?h))
+        (>= (capacidad-hab ?h) (pers-reserva ?r))
+      )
+    :effect 
+      (and 
+        (asignado ?r ?h)
+        (servida ?r)
+        (decrease (capacidad-hab ?h) (pers-reserva ?r))
+        (when (<= (capacidad-hab ?h) 0)
+          (lleno ?h)
+        )
+      )
+  )
+
+)
   
