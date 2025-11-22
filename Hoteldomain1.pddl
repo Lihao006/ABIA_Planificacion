@@ -49,8 +49,12 @@
   ;; Las prioridades lo gestionaremos por el rango de valores que pueden tomar los incrementos y decrementos.
   ;; Ponemos por ejemplo 8 para num-asignaciones, 4 para coste-habs y el desperdicio tendrá un valor entre 0 y 3.
   ;; Los valores de los costes puede ser entre 4 y 7 (coste-habs - coste-desperdicio).
-  ;; De esta forma, asignar una reserva siempre saldrá ganando (gana almenos 1 en la heuristica) frente a no asignarla, 
-  ;; luego minimizar el número de habitaciones usadas siempre saldrá ganando más que minimizar el desperdicio (hay una diferencia de 1 en la heurística).
+  
+  ;; De esta forma, asignar una reserva siempre saldrá ganando (gana almenos 1 en la heuristica) frente a no asignarla,
+  ;; por consecuencia, eliminar una reserva asignada siempre será peor que asignarla (pierde almenos 1 en la heuristica).
+
+  ;; Por otro lado, minimizar el número de habitaciones usadas siempre saldrá ganando más que minimizar el desperdicio (hay una diferencia de 1 en la heurística),
+  ;; pero 
 
   (:action asignar-habitacion
     :parameters (?r - reserva ?h - habitacion)
@@ -66,11 +70,11 @@
         (asignado ?r ?h)
         (servida ?r)
         (hay-personas ?h)
-        (decrease (pers-hab ?h) (pers-reserva ?r))
+        (increase (pers-hab ?h) (pers-reserva ?r))
         (increase (num-asignaciones) 8)
         (increase (coste-habs) 4)
         (increase (coste-desperdicio)
-                  (- (pers-hab ?h) (pers-reserva ?r))
+                  (- (capacidad-hab ?h) (pers-hab ?h))
         )
 
         (when (= (pers-hab ?h) (capacidad-hab ?h))
