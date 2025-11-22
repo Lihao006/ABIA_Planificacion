@@ -1,16 +1,15 @@
 (define (domain hoteldomain1)
   
   (:requirements :adl :typing :fluents)
-  (:types habitacion reserva persona - object
+  (:types habitacion reserva - object
   )
 
   (:predicates 
-    (peticion ?h - habitacion)
-    ()
+    (asignado ?r - reserva ?h - habitacion)
 
     ;; Predicado de filtro
-    (asignado ?p - persona)
     (lleno ?h - habitacion)
+    (servida ?r - reserva)
     
     )
 
@@ -19,3 +18,6 @@
     (pers_reserva ?r - reserva)
     (dia_inicio ?r - reserva)
     (dia_fin ?r - reserva)
+  )
+
+  
