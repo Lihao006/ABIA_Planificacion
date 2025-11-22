@@ -25,9 +25,14 @@
     
     ;; criterios a optimizar
     (num-asignaciones)
-    (num-habs)
+    (coste-habs)
     (coste-desperdicio)
     ;; (coste-orien-incorrecta)
+    
+  
+    (heuristica)
+    ;; heuristica = num-asignaciones - coste-habs - coste-desperdicio
+    ;; Queremos maximizar num-asignaciones y minimizar coste-habs y coste-desperdicio = maximizar heuristica
   )
 
   ;; Prioridades de la extensión 4:
@@ -36,7 +41,9 @@
   ;; 3. Minimizar desperdicio de capacidad (coste-desperdicio)
 
   ;; Las prioridades lo gestionaremos por el rango de valores que pueden tomar los incrementos y decrementos.
-  
+  ;; Ponemos por ejemplo 10 para num-asignaciones, 5 para num-habs y el desperdicio tendrá un valor entre 0 y 3.
+  ;; Los valores de los costes puede ser entre 5 y 8 (coste-habs - coste-desperdicio).
+
   (:action asignar-habitacion
     :parameters (?r - reserva ?h - habitacion)
     :precondition 
@@ -52,8 +59,8 @@
         (servida ?r)
         (hay-personas ?h)
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
-        (increase (num-asignaciones) 1)
-        (increase (num-habs) 1)
+        (increase (num-asignaciones) 10)
+        (increase (coste-habs) 5)
         (increase (coste-desperdicio)
                   (- (capacidad-hab ?h) (pers-reserva ?r))
         )
