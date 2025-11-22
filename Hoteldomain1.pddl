@@ -18,8 +18,14 @@
     )
 
   (:functions
+    ;; Capacidad maxima de cada habitación
     (capacidad-hab ?h - habitacion)
+
+    ;; Personas actualmente asignadas a cada habitación
+    (pers-hab ?h - habitacion)
+
     (pers-reserva ?r - reserva)
+    
     (dia-inicio ?r - reserva)
     (dia-fin ?r - reserva)
     
@@ -41,8 +47,10 @@
   ;; 3. Minimizar desperdicio de capacidad (coste-desperdicio)
 
   ;; Las prioridades lo gestionaremos por el rango de valores que pueden tomar los incrementos y decrementos.
-  ;; Ponemos por ejemplo 10 para num-asignaciones, 5 para num-habs y el desperdicio tendrá un valor entre 0 y 3.
-  ;; Los valores de los costes puede ser entre 5 y 8 (coste-habs - coste-desperdicio).
+  ;; Ponemos por ejemplo 8 para num-asignaciones, 4 para coste-habs y el desperdicio tendrá un valor entre 0 y 3.
+  ;; Los valores de los costes puede ser entre 4 y 7 (coste-habs - coste-desperdicio).
+  ;; De esta forma, asignar una reserva siempre saldrá ganando (gana almenos 1 en la heuristica) frente a no asignarla, 
+  ;; luego minimizar el número de habitaciones usadas siempre saldrá ganando más que minimizar el desperdicio (hay una diferencia de 1 en la heurística).
 
   (:action asignar-habitacion
     :parameters (?r - reserva ?h - habitacion)
@@ -51,44 +59,26 @@
         (not (servida ?r))
         (not (lleno ?h))
         ;; (not (asignado ?r ?h)) ;; con ver que la reserva no esté servida es suficiente.
-        (>= (capacidad-hab ?h) (pers-reserva ?r))
+        (>= (pers-hab ?h) (pers-reserva ?r))
       )
     :effect 
       (and 
         (asignado ?r ?h)
         (servida ?r)
         (hay-personas ?h)
-        (decrease (capacidad-hab ?h) (pers-reserva ?r))
-        (increase (num-asignaciones) 10)
-        (increase (coste-habs) 5)
+        (decrease (pers-hab ?h) (pers-reserva ?r))
+        (increase (num-asignaciones) 8)
+        (increase (coste-habs) 4)
         (increase (coste-desperdicio)
-                  (- (capacidad-hab ?h) (pers-reserva ?r))
+                  (- (pers-hab ?h) (pers-reserva ?r))
         )
 
-        (when (<= (capacidad-hab ?h) 0)
+        (when (= (pers-hab ?h) (capacidad-hab ?h))
           (lleno ?h)
         )
       )
   )
 
-  (:action desasignar-habitacion
-    :parameters (?r - reserva ?h - habitacion)
-    :precondition 
-      (and 
-        (asignado ?r ?h)
-        (servida ?r)
-      )
-    :effect 
-      (and 
-        (not (asignado ?r ?h))
-        (not (servida ?r))
-        (increase (capacidad-hab ?h) (pers-reserva ?r))
-
-        (when (> (capacidad-hab ?h) 0)
-          (not (lleno ?h))
-        )
-      )
-  )
 
 )
   
