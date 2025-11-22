@@ -36,8 +36,6 @@
     (hab-llenas)
     ;; (coste-orien-incorrecta)
     
-  
-    (heuristica)
     ;; heuristica = asignaciones - coste-habs - coste-desperdicio + hab-llenas
     ;; Queremos maximizar asignaciones y hab-llenas, después minimizar coste-habs y coste-desperdicio = maximizar heuristica
   )

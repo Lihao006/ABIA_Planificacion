@@ -22,5 +22,10 @@
    (vacio h3)
  )
 
- (:goal (forall (?h - habitacion) (servida ?r)))
+ (:goal (forall (?h - habitacion) (servida ?h)))
+
+ (:metric maximize 
+      (- (+ (asignaciones) (hab-llenas)) (+ (coste-habs) (coste-desperdicio)))
+)
+
 )
