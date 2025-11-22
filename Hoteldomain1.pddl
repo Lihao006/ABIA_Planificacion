@@ -12,8 +12,6 @@
 
     ;; Predicados de filtro
     (lleno ?h - habitacion)
-    (hay-personas ?h - habitacion)
-    ;; cuando una habitacion no está llena ni hay personas, está vacía
     (servida ?r - reserva)
     )
 
@@ -69,7 +67,6 @@
       (and 
         (asignado ?r ?h)
         (servida ?r)
-        (hay-personas ?h)
         (increase (pers-hab ?h) (pers-reserva ?r))
         (increase (num-asignaciones) 8)
         (increase (coste-habs) 4)
