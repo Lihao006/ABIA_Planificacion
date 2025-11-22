@@ -12,6 +12,8 @@
 
     ;; Predicados de filtro
     (lleno ?h - habitacion)
+    (hay-personas ?h - habitacion)
+    ;; cuando una habitacion no está llena ni hay personas, está vacía
     (servida ?r - reserva)
     )
 
@@ -25,7 +27,7 @@
     (num-asignaciones)
     (num-habs)
     (coste-desperdicio)
-    (coste-orien-incorrecta)
+    ;; (coste-orien-incorrecta)
   )
 
   ;; Prioridades de la extensión 4:
@@ -48,7 +50,13 @@
       (and 
         (asignado ?r ?h)
         (servida ?r)
+        (hay-personas ?h)
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
+        (increase (num-asignaciones) 1)
+        (increase (num-habs) 1)
+        (increase (coste-desperdicio)
+                  (- (capacidad-hab ?h) (pers-reserva ?r))
+        )
 
         (when (<= (capacidad-hab ?h) 0)
           (lleno ?h)
