@@ -71,7 +71,7 @@
   ;; Para obtener el mejor resultado, el programa debe asignar primero la reserva A a la habitación Y, y esto lo logramos con la función hab-llenas,
   ;; ya que la heurística mejora en 1 más si la asigna a la habitación Y que si la asigna a la habitación X.
 
-
+  
 
   (:action asignar-habitacion
     :parameters (?r - reserva ?h - habitacion)
