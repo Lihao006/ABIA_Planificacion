@@ -16,11 +16,8 @@
     )
 
   (:functions
-    ;; Capacidad maxima de cada habitación
+    ;; Espacios sin ocupar de cada habitación
     (capacidad-hab ?h - habitacion)
-
-    ;; Personas actualmente asignadas a cada habitación
-    (pers-hab ?h - habitacion)
 
     (pers-reserva ?r - reserva)
     
@@ -63,10 +60,14 @@
   ;; Para hacerlo, cuando una habitación queda llena, incrementamos el valor de hab-llenas en 1,
   ;; de manera que la heurística aumenta almenos en 10 (8 por asignaciones, 0 por coste-habs, almenos 1 por reducción del desperdicio y 1 por hab-llenas) 
   ;; cuando se llena la habitación, hasta un máximo de 12.
+  
   ;; Con esto, estamos definiendo lo siguiente:
-  ;; Dado 1 reserva con 1 persona, 1 habitación que le queda 3 espacios y 1 habitación que le queda 1 espacio,
-  ;; es mejor asignar la reserva a la habitación que le queda 1 espacio (heurística + 10) que a la que le quedan 3 espacios (heurística + 9).
-  ;; Por tanto, la heurística siempre aumenta en 1 más cuando la habitación queda llena que si no queda llena.
+  ;; Dado 1 reserva A con 1 persona, 1 reserva B con 3 personas, 1 habitación X que le queda 3 espacios y 1 habitación Y que le queda 1 espacio,
+  ;; y el programa está evaluando la reserva A y luego pasará a evaluar la reserva B,
+  ;; es mejor asignar la reserva A a la habitación Y y luego asignar la reserva B a la habitación X (heurística + 10 + 12 = 22) 
+  ;; que si hubiera asignado la reserva A a la habitación X y luego asignar la reserva B a una nueva habitación (heurística + 9 + 4 = 13).
+  ;; Para obtener el mejor resultado, el programa debe asignar primero la reserva A a la habitación Y, y esto lo logramos con la función hab-llenas,
+  ;; ya que la heurística mejora en 1 más si la asigna a la habitación Y que si la asigna a la habitación X.
 
   (:action asignar-habitacion
     :parameters (?r - reserva ?h - habitacion)
@@ -75,21 +76,22 @@
         (not (servida ?r))
         (not (lleno ?h))
         ;; (not (asignado ?r ?h)) ;; con ver que la reserva no esté servida es suficiente.
-        (>= (pers-hab ?h) (pers-reserva ?r))
+        (>= (capacidad-hab ?h) (pers-reserva ?r))
       )
     :effect 
       (and 
         (asignado ?r ?h)
         (servida ?r)
-        (increase (pers-hab ?h) (pers-reserva ?r))
+        (decrease (capacidad-hab ?h) (pers-reserva ?r))
         (increase (asignaciones) 8)
         (increase (coste-habs) 4)
         (increase (coste-desperdicio)
-                  (- (capacidad-hab ?h) (pers-hab ?h))
+                  (- (capacidad-hab ?h) (pers-reserva ?r))
         )
 
-        (when (= (pers-hab ?h) (capacidad-hab ?h))
+        (when (= (capacidad-hab ?h) 0)
           (lleno ?h)
+          (increase (hab-llenas) 1)
         )
       )
   )
