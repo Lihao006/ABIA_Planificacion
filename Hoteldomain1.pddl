@@ -19,5 +19,6 @@
     (dia_inicio ?r - reserva)
     (dia_fin ?r - reserva)
   )
-
+  
+  (:)
   
