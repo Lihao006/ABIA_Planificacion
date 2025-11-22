@@ -6,12 +6,12 @@
            )
 
  (:init
-   ;; Capacidades iniciales de las habitaciones
+
    (= (capacidad-hab h1) 2)
    (= (capacidad-hab h2) 4)
    (= (capacidad-hab h3) 3)
 
-   ;; Personas por reserva
+
    (= (pers-reserva r1) 1)
    (= (pers-reserva r2) 2)
    (= (pers-reserva r3) 3)
@@ -22,7 +22,7 @@
    (vacio h3)
  )
 
- (:goal (forall (?h - habitacion) (servida ?h)))
+ (:goal (forall (?r - reserva) (servida ?r)))
 
  (:metric maximize 
       (- (+ (asignaciones) (hab-llenas)) (+ (coste-habs) (coste-desperdicio)))
