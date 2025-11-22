@@ -1,7 +1,8 @@
 (define (domain hoteldomain1)
   
   (:requirements :adl :typing :fluents)
-  (:types habitacion reserva - object
+  (:types habitacion reserva orientacion - object
+          ;; N S E O - orientacion
   )
 
   (:predicates 
@@ -18,6 +19,8 @@
     (pers-reserva ?r - reserva)
     (dia-inicio ?r - reserva)
     (dia-fin ?r - reserva)
+    ;;(orientacion-hab ?h - habitacion)
+    ;;(orientacion-reserva ?r - reserva)
     
     ;; criterios a optimizar
     (num-asignaciones)
@@ -31,7 +34,7 @@
       (and 
         (not (servida ?r))
         (not (lleno ?h))
-        (not (asignado ?r ?h))
+        ;; (not (asignado ?r ?h)) ;; con ver que la reserva no esté servida es suficiente
         (>= (capacidad-hab ?h) (pers-reserva ?r))
       )
     :effect 
