@@ -7,6 +7,11 @@
 
  (:init
 
+   (= (asignaciones) 0)
+   (= (coste-habs) 0)
+   (= (coste-desperdicio) 0)
+   (= (hab-llenas) 0)
+
    (= (capacidad-hab h1) 2)
    (= (capacidad-hab h2) 4)
    (= (capacidad-hab h3) 3)
