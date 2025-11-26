@@ -25,6 +25,12 @@
    (vacio h1)
    (vacio h2)
    (vacio h3)
+
+   (not (servida r1))
+   (not (servida r2))
+   (not (servida r3))
+   (not (servida r4))
+
  )
 
 
