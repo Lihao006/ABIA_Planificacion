@@ -30,20 +30,20 @@
     (dia-fin ?r - reserva)
     
     ;; criterios a optimizar
-    (asignaciones)
-    (coste-habs)
-    (coste-desperdicio)
-    (hab-llenas)
+    ;;(asignaciones)
+    ;;(coste-habs)
+    ;;(coste-desperdicio)
+    ;;(hab-llenas)
     ;; (coste-orien-incorrecta)
+
+    (coste)
     
-    ;; heuristica = asignaciones - coste-habs - coste-desperdicio + hab-llenas
-    ;; Queremos maximizar asignaciones y hab-llenas, después minimizar coste-habs y coste-desperdicio = maximizar heuristica
   )
 
   ;; Prioridades de la extensión 4:
-  ;; 1. Asignar reservas (maximizar asignaciones)
-  ;; 2. Minimizar numero de habitaciones usadas (num-habs)
-  ;; 3. Minimizar desperdicio de capacidad (coste-desperdicio)
+  ;; 1. Minimizar coste reservas no asignadas
+  ;; 2. Minimizar numero de habitaciones usadas
+  ;; 3. Minimizar desperdicio de capacidad
 
   ;; Las prioridades lo gestionaremos por el rango de valores que pueden tomar los incrementos y decrementos.
   ;; Ponemos por ejemplo 8 para asignaciones, 4 para coste-habs y el desperdicio tendrá un valor entre 0 y 3.
@@ -88,22 +88,8 @@
         (asignado ?r ?h)
         (servida ?r)
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
-        (increase (coste-habs) 4)
-        (increase (coste-desperdicio)
-                  (- (capacidad-hab ?h) (pers-reserva ?r))
-        )
-
-        (when (= (capacidad-hab ?h) 0)
-          (and (lleno ?h)
-               (increase (hab-llenas) 1))
-        )
-
-        (when (vacio ?h)
-          (and (not (vacio ?h))
-               (increase (asignaciones) 8))
+        (increase (coste) 4) ;; coste-habs incrementa en 4 por cada asignación
         )
       )
   )
-
-)
   
