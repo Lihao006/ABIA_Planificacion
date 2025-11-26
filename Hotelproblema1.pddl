@@ -27,10 +27,12 @@
    (vacio h3)
  )
 
- (:goal (forall (?r - reserva) (servida ?r)))
+ ;;(:goal (forall (?r - reserva) (servida ?r)))
+ (:goal )
 
  (:metric maximize 
       (- (+ (asignaciones) (hab-llenas)) (+ (coste-habs) (coste-desperdicio)))
 )
+
 
 )
