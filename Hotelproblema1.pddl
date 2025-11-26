@@ -26,29 +26,9 @@
    (vacio h2)
    (vacio h3)
 
-   (not (servida r1))
-   (not (servida r2))
-   (not (servida r3))
-   (not (servida r4))
-    
-    (not (asignado r1 h1))
-    (not (asignado r1 h2))
-    (not (asignado r1 h3))
-    (not (asignado r2 h1))
-    (not (asignado r2 h2))
-    (not (asignado r2 h3))
-    (not (asignado r3 h1))
-    (not (asignado r3 h2))
-    (not (asignado r3 h3))
-    (not (asignado r4 h1))
-    (not (asignado r4 h2))
-    (not (asignado r4 h3))
-    
-    (not (lleno h1))
-    (not (lleno h2))
-    (not (lleno h3))
-    
  )
+
+ 
 
 
 ;;(:goal (forall (?r - reserva) (servida ?r)))
@@ -56,10 +36,7 @@
           (forall (?r - reserva) (servida ?r))
      )
 )
-
-(:metric maximize 
-      (- (+ (asignaciones) (hab-llenas)) (+ (coste-habs) (coste-desperdicio)))
+(:metric minimize 
+      (asignaciones)
 )
-
-
 )
