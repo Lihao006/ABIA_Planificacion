@@ -94,13 +94,13 @@
         )
 
         (when (= (capacidad-hab ?h) 0)
-          (lleno ?h)
-          (increase (hab-llenas) 1)
+          (and (lleno ?h)
+          (increase (hab-llenas) 1))
         )
 
         (when (vacio ?h)
-          (not (vacio ?h))
-          (increase (asignaciones) 8)
+          (and (not (vacio ?h))
+          (increase (asignaciones) 8))
         )
       )
   )
