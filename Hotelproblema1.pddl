@@ -12,7 +12,6 @@
    (= (capacidad-hab h1) 2)
    (= (capacidad-hab h2) 4)
    (= (capacidad-hab h3) 3)
-   (= (capacidad-hab h4) 1)
 
 
    (= (pers-reserva r1) 1)
