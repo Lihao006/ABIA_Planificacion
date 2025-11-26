@@ -27,10 +27,14 @@
    (vacio h3)
  )
 
- ;;(:goal (forall (?r - reserva) (servida ?r)))
- (:goal (True))
 
- (:metric maximize 
+;;(:goal (forall (?r - reserva) (servida ?r)))
+(:goal (or (forall (?h - habitacion) (lleno ?h))
+          (forall (?r - reserva) (servida ?r))
+     )
+)
+
+(:metric maximize 
       (- (+ (asignaciones) (hab-llenas)) (+ (coste-habs) (coste-desperdicio)))
 )
 
