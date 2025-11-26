@@ -28,7 +28,7 @@
  )
 
  ;;(:goal (forall (?r - reserva) (servida ?r)))
- (:goal )
+ (:goal (True))
 
  (:metric maximize 
       (- (+ (asignaciones) (hab-llenas)) (+ (coste-habs) (coste-desperdicio)))
