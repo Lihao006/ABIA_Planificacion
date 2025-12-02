@@ -1,16 +1,13 @@
 (define (domain hoteldomain1)
 
-  ;; Dominio que asigna de la mejor manera des del principio.
+  ;; Dominio Extensión 4
   
   (:requirements :adl :typing :fluents)
   (:types habitacion reserva orientacion - object
-          ;; N S E O - orientacion
   )
 
   (:predicates 
     (asignado ?r - reserva ?h - habitacion)
-    ;;(orientacion-hab ?h - habitacion ?o - orientacion)
-    ;;(orientacion-reserva ?r - reserva ?o - orientacion)
 
     ;; Predicados de filtro
     (lleno ?h - habitacion)
@@ -18,6 +15,9 @@
     ;; una habitació que no esté llena ni vacía està parcialmente ocupada
 
     (servida ?r - reserva)
+
+     ;; una reserva se concluye y aumenta el coste si no se ha servido
+    (concluida ?r - reserva)
     )
 
   (:functions
@@ -26,17 +26,8 @@
 
     (pers-reserva ?r - reserva)
     
-    (dia-inicio ?r - reserva)
-    (dia-fin ?r - reserva)
-    
-    ;; criterios a optimizar
-    ;;(asignaciones)
-    ;;(coste-habs)
-    ;;(coste-desperdicio)
-    ;;(hab-llenas)
-    ;; (coste-orien-incorrecta)
-
-    (coste)
+    ;; coste total
+    (coste-total)
     
   )
 
@@ -45,34 +36,32 @@
   ;; 2. Minimizar numero de habitaciones usadas
   ;; 3. Minimizar desperdicio de capacidad
 
-  ;; Las prioridades lo gestionaremos por el rango de valores que pueden tomar los incrementos y decrementos.
-  ;; Ponemos por ejemplo 8 para asignaciones, 4 para coste-habs y el desperdicio tendrá un valor entre 0 y 3.
-  ;; Los valores de los costes puede ser entre 4 y 7 (coste-habs + coste-desperdicio).
-  
-  ;; De esta forma, asignar una reserva siempre saldrá ganando (gana almenos 1 en la heuristica) frente a no asignarla,
-  ;; por consecuencia, eliminar una reserva asignada siempre será peor que asignarla (pierde almenos 1 en la heuristica).
+  ;; Las prioridades lo gestionaremos por el rango de valores que pueden tomar los incrementos.
+  ;; Ahora el coste por dejar espacios libres es entre 1 y 3 (1 por cada reserva asignada a una habitación sin llenarla)
+  ;; Respecto al coste por abrir una nueva habitación, es suficiente aumentar en 2 el coste para priorizarlo, porque si abrimos una nueva habitación, se incrementará también el coste por desperdicio
+  ;; y la función coste-total se incrementará en un valor en 3 (desperdicio + abierto, 1 + 2), y esto es siempre mayor que asignar una reserva a una habitación ya abierta (que solo incrementa el coste en 1 por desperdicio).
+  ;; El único caso en que no se incrementa el coste por desperdicio cuando abrimos habitacion es cuando la habitación queda llena, 
+  ;; entonces el coste solo aumentará en 2 por abrir la habitación, pero sigue siendo mayor que el desperdicio.
+  ;; Por tanto, se minimizará primero el número de habitaciones usadas y luego el desperdicio de capacidad.
 
-  ;; Por otro lado, minimizar el número de habitaciones usadas siempre saldrá ganando más que minimizar el desperdicio (hay una diferencia de 1 en la heurística).
+  ;; Por otro lado, el coste por no asignar una reserva debe ser mayor que el coste por abrir una nueva habitación y el coste de desperdicio juntos para priorizarlo siempre.
+  ;; Entonces seria 1 + 2 < 4, por tanto, el coste por no asignar una reserva será 4. De esta manera, se minimizará las reservas no asignadas aunque tenga que abrir nuevas habitaciones y desperdiciar capacidad,
+  ;; porque el coste-total siempre aumentará si no se asigna una reserva.
 
-  ;; Si asignamos una reserva a una habitación ya ocupada parcialmente, no incrementamos el coste-habs, reducimos el desperdicio y aumentamos asignaciones,
-  ;; de manera que la heurística aumenta almenos en 9 (8 por asignaciones y almenos 1 por reducción del desperdicio), hasta un máximo de 11.
-  ;; De esta manera le damos mucha prioridad a asignar reservas a habitaciones ya usadas, si es posible.
+  ;; En resumen:
+  ;; - En mejores casos, el coste-total no aumenta después de una iteración porque se ha asignado 1 reserva a una habitación ya abierta y la ha llenado. 
+  ;; - Asignar 1 reserva a una habitación ya abierta y no llenarla: coste-total += 1
+  ;; - Asignar 1 reserva a una habitación nueva y llenarla: coste-total += 2
+  ;; - Asignar 1 reserva a una habitación nueva y no llenarla: coste-total += 3
+  ;; - No asignar 1 reserva: coste-total += 4
 
-  ;; Para mejorar las asignaciones a habitaciones ya usadas, debemos considerar como mejor opción cuando se asignan reservas y la habitación
-  ;; queda llena, así priorizamos en llenar habitaciones ya usadas frente a dejar espacio libre.
-  ;; Para hacerlo, cuando una habitación queda llena, incrementamos el valor de hab-llenas en 1,
-  ;; de manera que la heurística aumenta almenos en 10 (8 por asignaciones, 0 por coste-habs, almenos 1 por reducción del desperdicio y 1 por hab-llenas) 
-  ;; cuando se llena la habitación, hasta un máximo de 12.
-  
   ;; Con esto, estamos definiendo lo siguiente:
   ;; Dado 1 reserva A con 1 persona, 1 reserva B con 3 personas, 1 habitación X que le queda 3 espacios y 1 habitación Y que le queda 1 espacio,
   ;; y el programa está evaluando la reserva A y luego pasará a evaluar la reserva B.
-  ;; La mejor manera es asignar la reserva A a la habitación Y y luego asignar la reserva B a la habitación X (heurística + 10 + 12 = 22) 
-  ;; que si hubiera asignado la reserva A a la habitación X y luego asignar la reserva B a una nueva habitación (heurística + 9 + 4 = 13).
-  ;; Para obtener el mejor resultado, el programa debe asignar primero la reserva A a la habitación Y, y esto lo logramos con la función hab-llenas,
-  ;; ya que la heurística mejora en 1 más si la asigna a la habitación Y que si la asigna a la habitación X.
+  ;; La mejor manera es asignar la reserva A a la habitación Y y luego asignar la reserva B a la habitación X (coste-total += 0) 
+  ;; que si hubiera asignado la reserva A a la habitación X y luego asignar la reserva B a una nueva habitación (coste-total += 1 + 3)
+  ;; o que si hubiera asignado la reserva A a una nueva habitación de capacidad 1 y luego asignar la reserva B a una nueva habitación de capacidad 3 (coste-total += 2 + 2).
 
-  
 
   (:action asignar-habitacion
     :parameters (?r - reserva ?h - habitacion)
@@ -88,8 +77,40 @@
         (asignado ?r ?h)
         (servida ?r)
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
-        (increase (coste) 4) ;; coste-habs incrementa en 4 por cada asignación
-        )
+        (when (= (capacidad-hab ?h) 0) (lleno ?h))
+        ;; si abrimos una nueva habitacion, incrementamos el coste en 1
+        (when (vacio ?h) (increase (coste-total) 1))
       )
   )
+
+
+  ;; ahora para concluir una reserva también miramos como está de lleno la habitación
+  (:action concluir
+    :parameters (?r - reserva ?h - habitacion)
+    :precondition 
+      (and 
+        (not (concluida ?r))
+      )
+    :effect 
+      (and 
+        (concluida ?r)
+
+        ;; Priorizamos servir reservas antes que dejar menos espacios libres en habitaciones
+        ;; y también antes que minimizar el número de habitaciones usadas
+        ;; El coste por dejar espacios libres es 2 por cada reserva asignada a una habitación sin llenarla
+        (when (not (servida ?r)) (increase (coste-total) 4))
+
+        ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 4 reservas de 1 persona a una habitación de 4.
+        ;; de esta forma, se intentará asignar primero las reservas con personas igual a la capacidad de la habitación para minimizar el desperdicio.
+        (when (and (not (lleno ?h)) (not (vacio ?h)) (asignado ?r ?h)) (increase (coste-total) 2))
+
+        ;; con esto definiremos lo siguiente:
+        ;; Dado 4 reserva Ai con 1 persona, 1 reserva B con 4 personas, 2 habitaciones Xi de 4 espacios y 4 habitaciones Yi de 1 espacio,
+        ;; el programa priorizará asignar las reservas Ai a 1 habitación Xi, y la reserva B a una habitación Xi, minimizando el coste total.
+      )
+  )
+  
+;; goal = (forall (< (capacidad-hab ?h) (pers-reserva ?r))
+;; metric minimize (coste-total)
+)
   
