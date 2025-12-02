@@ -78,8 +78,8 @@
         (servida ?r)
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
         (when (= (capacidad-hab ?h) 0) (lleno ?h))
-        ;; si abrimos una nueva habitacion, incrementamos el coste en 1
-        (when (vacio ?h) (increase (coste-total) 1))
+        ;; si abrimos una nueva habitacion, incrementamos el coste en 2
+        (when (vacio ?h) (increase (coste-total) 2))
       )
   )
 
@@ -97,16 +97,24 @@
 
         ;; Priorizamos servir reservas antes que dejar menos espacios libres en habitaciones
         ;; y también antes que minimizar el número de habitaciones usadas
-        ;; El coste por dejar espacios libres es 2 por cada reserva asignada a una habitación sin llenarla
+        ;; El coste por dejar espacios libres es 1 por cada reserva asignada a una habitación sin llenarla
         (when (not (servida ?r)) (increase (coste-total) 4))
 
         ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 4 reservas de 1 persona a una habitación de 4.
         ;; de esta forma, se intentará asignar primero las reservas con personas igual a la capacidad de la habitación para minimizar el desperdicio.
-        (when (and (not (lleno ?h)) (not (vacio ?h)) (asignado ?r ?h)) (increase (coste-total) 2))
+        (when (and (not (lleno ?h)) (not (vacio ?h)) (asignado ?r ?h)) (increase (coste-total) 1))
 
         ;; con esto definiremos lo siguiente:
-        ;; Dado 4 reserva Ai con 1 persona, 1 reserva B con 4 personas, 2 habitaciones Xi de 4 espacios y 4 habitaciones Yi de 1 espacio,
-        ;; el programa priorizará asignar las reservas Ai a 1 habitación Xi, y la reserva B a una habitación Xi, minimizando el coste total.
+        ;; Dado 3 reservas Ai con 1 persona, 1 reserva B con 3 personas, 1 habitación X ya abierta que le quedan 3 espacios,
+
+        ;; Si se asignan las reservas de 1 persona a la habitación de 3 y no se asigna la reserva de 3 personas, el coste aumentará en 2 + 4 (1 por cada reserva asignada, excepto la última que llenará la habitación + 4 por no asignar una reserva).
+        ;; Si se asignan las reservas de 1 persona a la habitación de 3 y se asigna la reserva de 3 personas a una nueva habitación de 3, el coste aumentará en 2 + 2 (1 por cada reserva asignada, excepto la última que llenará la habitación + 2 por abrir una nueva habitación).
+        ;; Si se asignan las reservas de 1 persona a 3 habitaciones nuevas de 1 espacio y se asigna la reserva B a la habitación X, el coste aumentará en 6 (2 por cada habitación abierta).
+        ;; Si se asignan las reservas de 1 persona a 1 habitación nueva de 3 espacios y se asigna la reserva B a la habitación X, el coste aumentará en 2 + 2 (2 por abrir una nueva habitación + 2 por desperdicio).
+
+        ;; Podemos ver que la segunda opción y la cuarta opción son los mejores y tienen el mismo coste, por lo que el planificador puede elegir cualquiera de las dos.
+        ;; Pero en los casos reales, las habitaciones de 1 espacio estarán siempre asignadas a reservas de 1 persona, ya que solo pueden servir para eso, y así se dejarán libres 
+        ;; las habitaciones de mayor capacidad para reservas más grandes, minimizando el número de reservas no asignadas.
       )
   )
   

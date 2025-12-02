@@ -25,7 +25,7 @@
     (pers-reserva ?r - reserva) 
      
     ;; coste por reservas no servidas
-    (coste)
+    (coste-total)
   )
 
   ;; necesitamos una acción para hacer lo básico para poder resolver el problema, que es asignar una habitación a una reserva
@@ -64,10 +64,10 @@
     :effect 
       (and 
         (concluida ?r)
-        (when (not (servida ?r)) (increase (coste) 1))
+        (when (not (servida ?r)) (increase (coste-total) 1))
       )
   )
   
 ;; goal = (forall (< (capacidad-hab ?h) (pers-reserva ?r))
-;; metric minimize (coste)
+;; metric minimize (coste-total)
 )
