@@ -1,4 +1,4 @@
-(define (domain hoteldomain1)
+(define (domain hoteldomain4)
 
   ;; Dominio Extensión 4
   

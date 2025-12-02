@@ -1,4 +1,4 @@
-(define (domain hoteldomainBasic)
+(define (domain hoteldomain3)
 
   ;; Dominio Extensión 3
   
