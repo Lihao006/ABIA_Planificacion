@@ -86,6 +86,6 @@
       )
   )
   
-;; goal = (forall (< (capacidad-hab ?h) (pers-reserva ?r))
+;; goal = (forall (?h - habitacion ?r - reserva) (< (capacidad-hab ?h) (pers-reserva ?r)))
 ;; metric minimize (coste-total)
 )
