@@ -20,6 +20,7 @@
    (= (pers-reserva r3) 3)
    (= (pers-reserva r4) 4)
 
+   (vacio h1)
    (vacio h2)
    (vacio h3)
    (vacio h4)
