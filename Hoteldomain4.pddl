@@ -3,7 +3,7 @@
   ;; Dominio Extensión 4
   
   (:requirements :adl :typing :fluents)
-  (:types habitacion reserva orientacion - object
+  (:types habitacion reserva - object
   )
 
   (:predicates 
