@@ -1,7 +1,7 @@
 (define (problem Hotelproblema40)
         (:domain Hoteldomain4)
 
- (:objects h2 h3 h4 - habitacion
+ (:objects h1 h2 h3 h4 - habitacion
            r1 r2 r3 r4 - reserva
            )
 
@@ -9,6 +9,7 @@
 
    (= (coste-total) 0)
 
+   (= (capacidad-hab h1) 1)
    (= (capacidad-hab h4) 4)
    (= (capacidad-hab h3) 3)
    (= (capacidad-hab h2) 2)
