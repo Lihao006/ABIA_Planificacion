@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("num_problemas", type=int)
 parser.add_argument("dominio")
 parser.add_argument("-m", type=int, default=10)
-parser.add_argument("-r", type=int, default=10)
+parser.add_argument("-r", type=int, default=100)
 parser.add_argument("-c", type=int, default=4)
 parser.add_argument("-p", type=int, default=4)
 parser.add_argument("--out", type=str, default=".")
@@ -46,10 +46,10 @@ def CrearProblema(n, dominio, m=10, r=10, c=4, p=4, out="."):
             {' '.join([r[0] for r in reservas])} - reserva
         )
         (:init 
-            (coste-total 0)
+            (= (coste-total) 0)
 
-            {''.join([f"(capacidad-hab {h[0]} {h[1]})\n\t\t\t" for h in habitaciones])}
-            {''.join([f"(pers-reserva {r[0]} {r[1]})\n\t\t\t" for r in reservas])}
+            {''.join([f"(= (capacidad-hab {h[0]}) {h[1]})\n\t\t\t" for h in habitaciones])}
+            {''.join([f"(= (pers-reserva {r[0]}) {r[1]})\n\t\t\t" for r in reservas])}
             {''.join([f"(vacio {h[0]})\n\t\t\t" for h in habitaciones])}
         )
         
