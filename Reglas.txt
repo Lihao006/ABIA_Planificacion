@@ -1,0 +1,36 @@
+
+si utilizamos :metric minimize
+no podemos utilizar decrease en los efectos de un operador
+
+
+si utilizamos :metric maximize
+no podemos utilizar increase en los efectos de un operador ni otra función que modifique positivamente el valor de cost_function
+
+
+f(n) = g(n) + h(n)
+g(n) = # passos màxim
+
+
+MetricFF 
+1. EHC: f(n) = g(n)
+2. Greedy Best First f(n)=g(n)+h(n)
+
+
+./metricff.exe -o Hoteldomain4.pddl -f Hotelproblema40.pddl -O -E
+
+time spent:    0.00 seconds instantiating 12 easy, 0 hard action templates
+               0.00 seconds reachability analysis, yielding 29 facts and 14 actions
+               0.00 seconds creating final representation with 30 relevant facts, 10 relevant fluents
+               0.00 seconds computing LNF
+               0.15 seconds building connectivity graph
+               0.00 seconds searching, evaluating 67 states, to a max depth of 0
+               0.15 seconds total time
+
+217 easy: num de nodes fàcil de distanciar
+
+0 hard: numero de nodes difícil de distanciar
+
+30 relevant facts: nombre d'estats inspeccionats, la resta es poden
+
+67 states: nombre total d'estats generats
+
