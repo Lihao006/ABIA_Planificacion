@@ -42,8 +42,10 @@
       (and 
         (asignado ?r ?h)
         (servida ?r)
+        (not (vacio ?h))
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
-        (when (= (capacidad-hab ?h) 0) (lleno ?h))
+        (when (= (capacidad-hab ?h) (pers-reserva ?r)) (lleno ?h))
+        ;;(when (not (= (capacidad-hab ?h) (pers-reserva ?r))) (increase (coste-total) 1))
       )
   )
 
@@ -71,6 +73,7 @@
     :precondition 
       (and 
         (not (concluida ?r))
+        (servida ?r)
         (asignado ?r ?h)
       )
     :effect 
@@ -83,9 +86,9 @@
         ;; tampoco permite hacer when dentro de otro when
 
         ;; podriamos poner un coste único independientemente de la capacidad que quede libre
-        ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 4 reservas de 1 persona a una habitación de 4.
-        ;; Con esto penalizamos asignar reservas pequeñas a habitaciones grandes y malgastar capacidad, pero beneficiamos llenar exactamente las habitaciones, excepto si las reservas pequeñas se quedan sin asignar.
-        (when (and (not (lleno ?h))) (increase (coste-total) 1))
+        ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 3 reservas de 1 persona a una habitación de 4.
+        ;; Con esto penalizamos asignar reservas pequeñas a habitaciones grandes y malgastar capacidad, pero beneficiamos llenar exactamente las habitaciones, excepto si hay muchas reservas pequeñas se quedan sin asignar.
+        (when (not (lleno ?h)) (increase (coste-total) 1))
 
       )
   )

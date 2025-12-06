@@ -43,8 +43,9 @@
       (and 
         (asignado ?r ?h)
         (servida ?r)
+        (not (vacio ?h))
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
-        (when (= (capacidad-hab ?h) 0) (lleno ?h))
+        (when (= (capacidad-hab ?h) (pers-reserva ?r)) (lleno ?h))
       )
   )
 

@@ -76,8 +76,9 @@
       (and 
         (asignado ?r ?h)
         (servida ?r)
+        (not (vacio ?h))
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
-        (when (= (capacidad-hab ?h) 0) (lleno ?h))
+        (when (= (capacidad-hab ?h) (pers-reserva ?r)) (lleno ?h))
         ;; si abrimos una nueva habitacion, incrementamos el coste en 2
         (when (vacio ?h) (increase (coste-total) 2))
       )
@@ -102,12 +103,13 @@
     :precondition 
       (and 
         (not (concluida ?r))
+        (servida ?r)
         (asignado ?r ?h)
       )
     :effect 
       (and 
         (concluida ?r)
-        (when (and (not (lleno ?h))) (increase (coste-total) 1))
+        (when (not (lleno ?h)) (increase (coste-total) 1))
 
      )
   )
