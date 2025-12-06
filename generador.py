@@ -6,8 +6,8 @@ random.seed(42)
 parser = argparse.ArgumentParser()
 parser.add_argument("num_problemas", type=int)
 parser.add_argument("dominio")
-parser.add_argument("-m", type=int, default=10)
-parser.add_argument("-r", type=int, default=10)
+parser.add_argument("-m", type=int, default=5)
+parser.add_argument("-r", type=int, default=5)
 parser.add_argument("-c", type=int, default=4)
 parser.add_argument("-p", type=int, default=4)
 parser.add_argument("--out", type=str, default=".")
@@ -54,7 +54,7 @@ def CrearProblema(n, dominio, m=10, r=10, c=4, p=4, out="."):
         )
         
         (:goal
-            (:goal (forall (?r - reserva) (concluida ?r)))
+            (forall (?r - reserva) (concluida ?r))
         )
 
         (:metric minimize (coste-total))
