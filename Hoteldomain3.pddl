@@ -48,13 +48,13 @@
   )
 
   ;; ahora para concluir una reserva también miramos como está de lleno la habitación
-  ;; si la reserva no se ha servido, la habitación con la que se unifica es irrelevante
-  (:action concluir
-    :parameters (?r - reserva ?h - habitacion)
+  ;; lo haremos en dos operaciones separadas para las reservas no asignadas y las asignadas
+  (:action concluir-no-asignadas
+    :parameters (?r - reserva)
     :precondition 
       (and 
         (not (concluida ?r))
-        (or (not (servida ?r)) (asignado ?r ?h))
+        (not (servida ?r))
       )
     :effect 
       (and 
@@ -62,33 +62,44 @@
 
         ;; Priorizamos servir reservas antes que dejar menos espacios libres en habitaciones  
         ;; El coste por no servir una reserva es 2, que será siempre mayor que el coste por dejar espacios libres en habitaciones, por lo que se minimizará primero
-        (when (not (servida ?r)) (increase (coste-total) 2))
+        (increase (coste-total) 2)
+      )
+  )
+
+  (:action concluir-asignadas
+    :parameters (?r - reserva ?h - habitacion)
+    :precondition 
+      (and 
+        (not (concluida ?r))
+        (asignado ?r ?h)
+      )
+    :effect 
+      (and 
+        (concluida ?r)
 
         ;; no podemos hacer directamente un increase porque metricff no permite incrementos ni decrementos no constantes
         ;; (when (and (asignado ?r ?h) (not (lleno ?h))) (increase (coste-total) (capacidad-hab ?h)))
         ;; asi que comprobamos la capacidad en cada when separado
         ;; tampoco permite hacer when dentro de otro when
-        
-        ;;(when (and (not (lleno ?h)) (not (vacio ?h)) (asignado ?r ?h) (= (capacidad-hab ?h) 1)) (increase (coste-total) 1))
-        ;;(when (and (not (lleno ?h)) (not (vacio ?h)) (asignado ?r ?h) (= (capacidad-hab ?h) 2)) (increase (coste-total) 2))
-        ;;(when (and (not (lleno ?h)) (not (vacio ?h)) (asignado ?r ?h) (= (capacidad-hab ?h) 3)) (increase (coste-total) 3))
-        ;; si la capacidad es 4 (máx) quiere decir que no se ha asignado nadie a la habitación, por tanto no hacemos nada
-        
+
         ;; podriamos poner un coste único independientemente de la capacidad que quede libre
         ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 4 reservas de 1 persona a una habitación de 4.
         ;; Con esto penalizamos asignar reservas pequeñas a habitaciones grandes y malgastar capacidad, pero beneficiamos llenar exactamente las habitaciones, excepto si las reservas pequeñas se quedan sin asignar.
-        (when (and (not (lleno ?h)) (asignado ?r ?h)) (increase (coste-total) 1))
+        (when (and (not (lleno ?h))) (increase (coste-total) 1))
 
-        ;; con esto definiremos lo siguiente:
+      )
+  )
+  
+
+;; con esto definiremos lo siguiente:
         ;; Dado 4 reserva Ai con 1 persona, 1 reserva B con 4 personas, 2 habitaciones Xi de 4 espacios y 4 habitaciones Yi de 1 espacio,
         ;; el programa priorizará asignar las reservas Ai a las habitaciones Yi, y la reserva B a una habitación Xi, minimizando el coste total.
 
         ;; Si se asignan las reservas de 1 persona a una habitación de 4, el coste aumentará en 3 (1 por cada reserva asignada, excepto la última que llenará la habitación).
         ;; Si se asignan las reservas de 1 personas a 4 habitaciones de 1, el coste no aumentará (todas las habitaciones quedan llenas).
         ;; Asin dejamos libre las habitaciones de mayor capacidad para reservas más grandes, ya que las habitaciones pequeñas solo sirven para reservas pequeñas y no malgastaremos capacidad.
-      )
-  )
-  
+
+
 ;; goal = (:goal (forall (?r - reserva) (concluida ?r)))
 ;; metric minimize (coste-total)
 )

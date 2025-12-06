@@ -70,7 +70,6 @@
         (not (concluida ?r))
         (not (servida ?r))
         (not (lleno ?h))
-        ;; (not (asignado ?r ?h)) ;; con ver que la reserva no esté servida es suficiente.
         (>= (capacidad-hab ?h) (pers-reserva ?r))
       )
     :effect 
@@ -84,29 +83,36 @@
       )
   )
 
-
-  ;; ahora para concluir una reserva también miramos como está de lleno la habitación
-  (:action concluir
-    :parameters (?r - reserva ?h - habitacion)
+  (:action concluir-no-asignadas
+    :parameters (?r - reserva)
     :precondition 
       (and 
         (not (concluida ?r))
-        (or (not (servida ?r)) (asignado ?r ?h))
+        (not (servida ?r))
       )
     :effect 
       (and 
         (concluida ?r)
+        (increase (coste-total) 4)
+      )
+  )
 
-        ;; Priorizamos servir reservas antes que dejar menos espacios libres en habitaciones
-        ;; y también antes que minimizar el número de habitaciones usadas
-        ;; El coste por dejar espacios libres es 1 por cada reserva asignada a una habitación sin llenarla
-        (when (not (servida ?r)) (increase (coste-total) 4))
+  (:action concluir-asignadas
+    :parameters (?r - reserva ?h - habitacion)
+    :precondition 
+      (and 
+        (not (concluida ?r))
+        (asignado ?r ?h)
+      )
+    :effect 
+      (and 
+        (concluida ?r)
+        (when (and (not (lleno ?h))) (increase (coste-total) 1))
 
-        ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 4 reservas de 1 persona a una habitación de 4.
-        ;; de esta forma, se intentará asignar primero las reservas con personas igual a la capacidad de la habitación para minimizar el desperdicio.
-        (when (and (not (lleno ?h)) (not (vacio ?h)) (asignado ?r ?h)) (increase (coste-total) 1))
+     )
+  )
 
-        ;; con esto definiremos lo siguiente:
+ ;; con esto definiremos lo siguiente:
         ;; Dado 3 reservas Ai con 1 persona, 1 reserva B con 3 personas, 1 habitación X ya abierta que le quedan 3 espacios,
 
         ;; Si se asignan las reservas de 1 persona a la habitación de 3 y no se asigna la reserva de 3 personas, el coste aumentará en 2 + 4 (1 por cada reserva asignada, excepto la última que llenará la habitación + 4 por no asignar una reserva).
@@ -117,8 +123,8 @@
         ;; Podemos ver que la segunda opción y la cuarta opción son los mejores y tienen el mismo coste, por lo que el planificador puede elegir cualquiera de las dos.
         ;; Pero en los casos reales, las habitaciones de 1 espacio estarán siempre asignadas a reservas de 1 persona, ya que solo pueden servir para eso, y así se dejarán libres 
         ;; las habitaciones de mayor capacidad para reservas más grandes, minimizando el número de reservas no asignadas.
-      )
-  )
+
+  
   
 ;; goal = (forall (?h - habitacion ?r - reserva) (< (capacidad-hab ?h) (pers-reserva ?r)))
 ;; metric minimize (coste-total)
