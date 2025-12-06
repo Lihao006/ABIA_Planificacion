@@ -54,7 +54,7 @@
     :precondition 
       (and 
         (not (concluida ?r))
-        (or (asignado ?r ?h) (not (servida ?r)))
+        (or (not (servida ?r)) (asignado ?r ?h))
       )
     :effect 
       (and 
