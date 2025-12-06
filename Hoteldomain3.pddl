@@ -48,6 +48,7 @@
   )
 
   ;; ahora para concluir una reserva también miramos como está de lleno la habitación
+  ;; si la reserva no se ha servido, la habitación con la que se unifica es irrelevante
   (:action concluir
     :parameters (?r - reserva ?h - habitacion)
     :precondition 
@@ -76,7 +77,7 @@
         ;; podriamos poner un coste único independientemente de la capacidad que quede libre
         ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 4 reservas de 1 persona a una habitación de 4.
         ;; Con esto penalizamos asignar reservas pequeñas a habitaciones grandes y malgastar capacidad, pero beneficiamos llenar exactamente las habitaciones, excepto si las reservas pequeñas se quedan sin asignar.
-        (when (and (not (lleno ?h)) (not (vacio ?h)) (asignado ?r ?h)) (increase (coste-total) 1))
+        (when (and (not (lleno ?h)) (asignado ?r ?h)) (increase (coste-total) 1))
 
         ;; con esto definiremos lo siguiente:
         ;; Dado 4 reserva Ai con 1 persona, 1 reserva B con 4 personas, 2 habitaciones Xi de 4 espacios y 4 habitaciones Yi de 1 espacio,
