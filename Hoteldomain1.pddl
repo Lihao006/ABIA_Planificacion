@@ -56,6 +56,7 @@
 
   ;; Definimos la acción "concluir" que modifica la función "coste" si una reserva no ha sido servida.
   ;; Por tanto, nos interesa que se modifique lo menos posible, es decir, que se sirvan el máximo número de reservas posibles.
+  ;; Además, el hecho de concluir una reserva lo marcará como "resuelta" y no podrá volver a ser asignada a una habitación.
   (:action concluir
     :parameters (?r - reserva)
     :precondition 

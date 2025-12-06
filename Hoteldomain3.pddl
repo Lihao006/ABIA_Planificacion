@@ -53,6 +53,7 @@
     :precondition 
       (and 
         (not (concluida ?r))
+        (or (asignado ?r ?h) (not (servida ?r)))
       )
     :effect 
       (and 
