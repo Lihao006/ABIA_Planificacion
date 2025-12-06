@@ -30,9 +30,9 @@ def CrearProblema(n, dominio, m=10, r=10, c=4, p=4, out="."):
      
     # Crear objetos
     habitaciones = [(f"h{i}", random.randint(1, c))
-                    for i in range(1, random.randint(m, m))]
+                    for i in range(1, random.randint(m+1, m+1))]
     reservas = [(f"r{j}", random.randint(1, p))
-                for j in range(1, random.randint(r, r))]
+                for j in range(1, random.randint(r+1, r+1))]
 
     os.makedirs(out, exist_ok=True)
 

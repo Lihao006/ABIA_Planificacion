@@ -1,5 +1,5 @@
 (define (problem HotelproblemaBasic)
-        (:domain hoteldomainBasic)
+        (:domain hoteldomain4)
 
  (:objects h1 h2 h3 h4 - habitacion
            r1 r2 r3 r4 - reserva
