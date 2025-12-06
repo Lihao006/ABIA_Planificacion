@@ -50,12 +50,12 @@
   )
 
   ;; sabemos que MetricFF no permite el uso de operaciones de incremento/decremento si la métrica es maximizar/minimizar una función, respectivamente,
-  ;; por tanto, la función a optimizar debe ser siempre algo parecido a un "coste", ya que solo lo podemos modificar en la dirección contraria a la métrica.
-  ;; Siendo así, las acciones que tiene efectos que modifican la función deben ser del tipo "cuanto menos se realicen, mejor", y esto no es el caso para nuestra
-  ;; acción "asignar-habitacion", ya que queremos asignar el máximo número de reservas posibles.
-  ;; Por tanto, necesitamos otra acción que modifique la función "coste", y que sea del tipo "cuanto menos se realicen, mejor".
+  ;; por tanto, la función a optimizar debe ser siempre algo parecido a un "coste total", ya que sólo lo podemos modificar en la dirección contraria a la métrica.
+  ;; Siendo así, las acciones que tiene efectos que modifican la métrica deben tener algun tipo de coste, pero nunca ganancias.
+  ;; Esto es el caso para la extensión 1 con la acción "asignar-habitacion", ya que queremos asignar el máximo número de reservas posibles, y esta acción no tiene coste alguna (de momento), o almenos, no nos interesa que tenga coste.
+  ;; Por tanto, necesitamos otra acción que modifique la función "coste total".
 
-  ;; Definimos la acción "concluir" que modifica la función "coste" si una reserva no ha sido servida.
+  ;; Definimos la acción "concluir" que modifica la función "coste total" si una reserva no ha sido servida.
   ;; Por tanto, nos interesa que se modifique lo menos posible, es decir, que se sirvan el máximo número de reservas posibles.
   ;; Además, el hecho de concluir una reserva lo marcará como "resuelta" y no podrá volver a ser asignada a una habitación.
   (:action concluir

@@ -28,7 +28,6 @@
       (and 
         (not (servida ?r))
         (not (lleno ?h))
-        (not (vacio ?h))
         ;; (not (asignado ?r ?h)) ;; con ver que la reserva no esté servida es suficiente.
         (>= (capacidad-hab ?h) (pers-reserva ?r))
       )

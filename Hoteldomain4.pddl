@@ -79,40 +79,27 @@
         (not (vacio ?h))
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
         (when (= (capacidad-hab ?h) (pers-reserva ?r)) (lleno ?h))
+        (when (not (= (capacidad-hab ?h) (pers-reserva ?r))) (increase (coste-total) 1))
+
         ;; si abrimos una nueva habitacion, incrementamos el coste en 2
         (when (vacio ?h) (increase (coste-total) 2))
+        
       )
   )
 
-  (:action concluir-no-asignadas
+  (:action concluir
     :parameters (?r - reserva)
     :precondition 
       (and 
         (not (concluida ?r))
-        (not (servida ?r))
       )
     :effect 
       (and 
         (concluida ?r)
-        (increase (coste-total) 4)
+        (when (not (servida ?r)) (increase (coste-total) 4))
       )
   )
-
-  (:action concluir-asignadas
-    :parameters (?r - reserva ?h - habitacion)
-    :precondition 
-      (and 
-        (not (concluida ?r))
-        (servida ?r)
-        (asignado ?r ?h)
-      )
-    :effect 
-      (and 
-        (concluida ?r)
-        (when (not (lleno ?h)) (increase (coste-total) 1))
-
-     )
-  )
+    
 
  ;; con esto definiremos lo siguiente:
         ;; Dado 3 reservas Ai con 1 persona, 1 reserva B con 3 personas, 1 habitación X ya abierta que le quedan 3 espacios,
