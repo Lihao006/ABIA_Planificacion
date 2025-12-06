@@ -54,12 +54,13 @@ def CrearProblema(n, dominio, m=10, r=10, c=4, p=4, out="."):
         )
         
         (:goal
-            (forall (?h - habitacion ?r - reserva) (< (capacidad-hab ?h) (pers-reserva ?r)))
+            (:goal (forall (?r - reserva) (concluida ?r)))
         )
 
         (:metric minimize (coste-total))
-    )""")
-
+    )"""
+)
+        
 def CrearNProblemas(num_problemas, dominio, m=10, r=10, c=4, p=4, out="."):
     '''
     Método para crear varios problemas PDDL de asignación de habitaciones de hotel a reservas.

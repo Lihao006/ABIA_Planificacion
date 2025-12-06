@@ -67,6 +67,7 @@
     :parameters (?r - reserva ?h - habitacion)
     :precondition 
       (and 
+        (not (concluida ?r))
         (not (servida ?r))
         (not (lleno ?h))
         ;; (not (asignado ?r ?h)) ;; con ver que la reserva no esté servida es suficiente.

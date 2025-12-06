@@ -43,9 +43,9 @@
 			
         )
         
-        (:goal
-            (forall (?h - habitacion ?r - reserva) (< (capacidad-hab ?h) (pers-reserva ?r)))
-        )
+		(:goal
+			(forall (?r - reserva) (concluida ?r))
+		)
 
         (:metric minimize (coste-total))
     )

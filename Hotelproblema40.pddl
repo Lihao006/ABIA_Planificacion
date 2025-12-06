@@ -1,5 +1,5 @@
 (define (problem Hotelproblema40)
-        (:domain hoteldomain1)
+        (:domain hoteldomain4)
 
  (:objects h1 h2 h3 h4 - habitacion
            r1 r2 r3 r4 - reserva
@@ -9,7 +9,6 @@
 
    (= (coste-total) 0)
 
-   (= (capacidad-hab h4) 4)
    (= (capacidad-hab h3) 3)
    (= (capacidad-hab h2) 2)
    (= (capacidad-hab h1) 1)
@@ -30,8 +29,9 @@
 ;;(:goal (or (forall (?h - habitacion) (lleno ?h))
 ;;          (forall (?r - reserva) (servida ?r)))
 
-(:goal (forall (?h - habitacion ?r - reserva) (< (capacidad-hab ?h) (pers-reserva ?r))))
+;;(:goal (forall (?h - habitacion ?r - reserva) (< (capacidad-hab ?h) (pers-reserva ?r))))
 
+(:goal (forall (?r - reserva) (concluida ?r)))
 
 (:metric minimize (coste-total))
 )
