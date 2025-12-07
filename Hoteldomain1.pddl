@@ -58,19 +58,34 @@
   ;; Definimos la acción "concluir" que modifica la función "coste total" si una reserva no ha sido servida.
   ;; Por tanto, nos interesa que se modifique lo menos posible, es decir, que se sirvan el máximo número de reservas posibles.
   ;; Además, el hecho de concluir una reserva lo marcará como "resuelta" y no podrá volver a ser asignada a una habitación.
-  (:action concluir
+
+  ;; crearemos 2 acciones de concluir para reservas servidas y no servidas, asi diferenciaremos cuáles han quedado servidas.
+  (:action concluir-no-servidas
     :parameters (?r - reserva)
     :precondition 
       (and 
         (not (concluida ?r))
+        (not (servida ?r))
       )
     :effect 
       (and 
         (concluida ?r)
-        (when (not (servida ?r)) (increase (coste-total) 1))
+        (increase (coste-total) 1)
       )
   )
   
+  (:action concluir-servidas
+    :parameters (?r - reserva ?h - habitacion)
+    :precondition 
+      (and 
+        (not (concluida ?r))
+        (imply (servida ?r) (asignado ?r ?h))
+      )
+    :effect 
+      (and 
+        (concluida ?r)
+      )
+  )
 ;; goal = (:goal (forall (?r - reserva) (concluida ?r)))
 ;; metric minimize (coste-total)
 )

@@ -87,19 +87,34 @@
       )
   )
 
-  (:action concluir
+  (:action concluir-no-servidas
     :parameters (?r - reserva)
     :precondition 
       (and 
         (not (concluida ?r))
+        (not (servida ?r))
       )
     :effect 
       (and 
         (concluida ?r)
-        (when (not (servida ?r)) (increase (coste-total) 4))
+        (increase (coste-total) 4)
+      )
+  )
+
+  (:action concluir-servidas
+    :parameters (?r - reserva ?h - habitacion)
+    :precondition 
+      (and 
+        (not (concluida ?r))
+        (imply (servida ?r) (asignado ?r ?h))
+      )
+    :effect 
+      (and 
+        (concluida ?r)
       )
   )
     
+  
 
  ;; con esto definiremos lo siguiente:
         ;; Dado 3 reservas Ai con 1 persona, 1 reserva B con 3 personas, 1 habitación X ya abierta que le quedan 3 espacios,

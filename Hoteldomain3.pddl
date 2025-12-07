@@ -59,11 +59,12 @@
 
   ;; ahora para concluir una reserva también miramos como está de lleno la habitación
   ;; lo haremos en dos operaciones separadas para las reservas no asignadas y las asignadas
-  (:action concluir
+  (:action concluir-no-servidas
     :parameters (?r - reserva)
     :precondition 
       (and 
         (not (concluida ?r))
+        (not (servida ?r))
       )
     :effect 
       (and 
@@ -71,7 +72,20 @@
 
         ;; Priorizamos servir reservas antes que dejar menos espacios libres en habitaciones  
         ;; El coste por no servir una reserva es 2, que será siempre mayor que el coste por dejar espacios libres en habitaciones, por lo que se minimizará primero
-        (when (not (servida ?r)) (increase (coste-total) 2))
+        (increase (coste-total) 2)
+      )
+  )
+
+  (:action concluir-servidas
+    :parameters (?r - reserva ?h - habitacion)
+    :precondition 
+      (and 
+        (not (concluida ?r))
+        (imply (servida ?r) (asignado ?r ?h))
+      )
+    :effect 
+      (and 
+        (concluida ?r)
       )
   )
 
