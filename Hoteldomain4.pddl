@@ -106,6 +106,7 @@
     :precondition 
       (and 
         (not (concluida ?r))
+        (not (vacio ?h))
         (asignado ?r ?h)
       )
     :effect 
