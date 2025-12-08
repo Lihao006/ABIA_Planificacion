@@ -1,5 +1,5 @@
 (define (problem problemaExp3b)
-            (:domain Hoteldomain4)
+            (:domain Hoteldomain3)
 
         (:objects 
             h1 h2 h3 h4 h5 - habitacion
@@ -19,7 +19,6 @@
 			(= (capacidad-hab h3) 4)
 			(= (capacidad-hab h4) 4)
 			(= (capacidad-hab h5) 2)
-
 			
 			(= (pers-reserva r1) 2)
 			(= (pers-reserva r2) 1)

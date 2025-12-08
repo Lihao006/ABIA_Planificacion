@@ -80,6 +80,7 @@
       (and 
         (not (concluida ?r))
         (not (vacio ?h))
+        (servida ?r)
         (asignado ?r ?h)
       )
     :effect 

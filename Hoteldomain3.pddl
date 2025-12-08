@@ -65,9 +65,9 @@
         (concluida ?r)
 
         ;; Priorizamos servir reservas antes que dejar menos espacios libres en habitaciones  
-        ;; El coste por no servir una reserva es 13, que será siempre mayor que el coste por dejar espacios libres en habitaciones,
-        ;; (coste por dejar espacios libres en habitaciones como mucho será 3*3 + 3 = 12, si se asignan 3 reservas de 1 persona a una habitación de 4)
-        (increase (coste-total) 13)
+        ;; El coste por no servir una reserva es 7, que será siempre mayor que el coste por dejar espacios libres en habitaciones,
+        ;; (el coste por dejar espacios libres en habitaciones como mucho será 6, si se asignan 3 reservas de 1 persona a una habitación de 4)
+        (increase (coste-total) 7)
       )
   )
 
@@ -77,6 +77,7 @@
       (and 
         (not (concluida ?r))
         (not (vacio ?h))
+        (servida ?r)
         (asignado ?r ?h)
       )
     :effect 
@@ -90,19 +91,17 @@
         ;; (when (and (asignado ?r ?h) (not (lleno ?h))) (increase (coste-total) (capacidad-hab ?h)))
 
         ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 3 reservas de 1 persona a una habitación de 4.
+        ;; el valor que se incrementa es como mucho 3, ya sea una vez 3 (1 reserva de 1 persona asignada a 1 habitación de 4 plazas), o 3 veces 1 (3 reservas de 1 persona a una habitación de 4).
         ;; este coste no se aplica si la habitación queda llena aunque tenga más de 1 reserva asignada
         ;; por tanto, este coste penaliza solo las habitaciones que no quedan llenas al final de la planificación, a diferencia que el coste que hay en asignar-habitacion 
-        (when (not (lleno ?h)) (increase (coste-total) 3))
+        (when (= (capacidad-hab ?h) 1) (increase (coste-total) 1))
+        (when (= (capacidad-hab ?h) 2) (increase (coste-total) 2))
+        (when (= (capacidad-hab ?h) 3) (increase (coste-total) 3))
+
+        ;; no se puede hacer directamente esto:
+        ;; (when (not (lleno ?h)) (increase (coste-total) (capacidad-hab ?h)))
       )
   )
-
-;; con esto definiremos lo siguiente:
-        ;; Dado 4 reserva Ai con 1 persona, 1 reserva B con 4 personas, 2 habitaciones Xi de 4 espacios y 4 habitaciones Yi de 1 espacio,
-        ;; el programa priorizará asignar las reservas Ai a las habitaciones Yi, y la reserva B a una habitación Xi, minimizando el coste total.
-
-        ;; Si se asignan las reservas de 1 persona a una habitación de 4, el coste aumentará en 3 (1 por cada reserva asignada, excepto la última que llenará la habitación).
-        ;; Si se asignan las reservas de 1 personas a 4 habitaciones de 1, el coste no aumentará (todas las habitaciones quedan llenas).
-        ;; Asin dejamos libre las habitaciones de mayor capacidad para reservas más grandes, ya que las habitaciones pequeñas solo sirven para reservas pequeñas y no malgastaremos capacidad.
 
 
 ;; goal = (:goal (forall (?r - reserva) (concluida ?r)))
