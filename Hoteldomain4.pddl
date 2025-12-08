@@ -106,7 +106,7 @@
     :precondition 
       (and 
         (not (concluida ?r))
-        (imply (servida ?r) (asignado ?r ?h))
+        (asignado ?r ?h)
       )
     :effect 
       (and 
