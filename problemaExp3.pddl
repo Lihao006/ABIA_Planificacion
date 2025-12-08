@@ -1,5 +1,5 @@
 (define (problem problemaExp3)
-            (:domain Hoteldomain1)
+            (:domain Hoteldomain4)
 
         (:objects 
             h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 - habitacion

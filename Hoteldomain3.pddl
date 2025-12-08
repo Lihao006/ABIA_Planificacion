@@ -46,13 +46,7 @@
         (decrease (capacidad-hab ?h) (pers-reserva ?r))
         (when (= (capacidad-hab ?h) (pers-reserva ?r)) (lleno ?h))
 
-        ;; necesitamos priorizar las asignaciones que nos interasan: primero, las reservas con un número de personas más cercano a la capacidad restante de la habitación
-        ;; por ello, ahora el operador asignar-habitacion modifica el coste total para penalizar las asignaciones que dejan más espacios libres en la habitación
-
-        ;; no podemos hacer directamente un increase porque metricff no permite incrementos ni decrementos no constantes
-        ;; (when (and (asignado ?r ?h) (not (lleno ?h))) (increase (coste-total) (capacidad-hab ?h)))
-
-        ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 3 reservas de 1 persona a una habitación de 4.
+        ;; ahora al asignar una habitación también modificamos el coste total para penalizar las asignaciones que dejan espacios libres en habitaciones
         (when (not (= (capacidad-hab ?h) (pers-reserva ?r))) (increase (coste-total) 1))
       )
   )
@@ -71,8 +65,9 @@
         (concluida ?r)
 
         ;; Priorizamos servir reservas antes que dejar menos espacios libres en habitaciones  
-        ;; El coste por no servir una reserva es 2, que será siempre mayor que el coste por dejar espacios libres en habitaciones, por lo que se minimizará primero
-        (increase (coste-total) 2)
+        ;; El coste por no servir una reserva es 13, que será siempre mayor que el coste por dejar espacios libres en habitaciones,
+        ;; (coste por dejar espacios libres en habitaciones como mucho será 3*3 + 3 = 12, si se asignan 3 reservas de 1 persona a una habitación de 4)
+        (increase (coste-total) 13)
       )
   )
 
@@ -87,6 +82,17 @@
     :effect 
       (and 
         (concluida ?r)
+        
+        ;; necesitamos priorizar las asignaciones que nos interasan: primero, las reservas con un número de personas más cercano a la capacidad restante de la habitación
+        ;; por ello, ahora el operador concluir-servidas también modificará el coste total en función de los espacios libres que queden en la habitación tras asignar la reserva
+
+        ;; no podemos hacer directamente un increase porque metricff no permite incrementos ni decrementos no constantes
+        ;; (when (and (asignado ?r ?h) (not (lleno ?h))) (increase (coste-total) (capacidad-hab ?h)))
+
+        ;; hay que tener en cuente que este coste se suma hasta, como máximo, 3 veces si se asignan 3 reservas de 1 persona a una habitación de 4.
+        ;; este coste no se aplica si la habitación queda llena aunque tenga más de 1 reserva asignada
+        ;; por tanto, este coste penaliza solo las habitaciones que no quedan llenas al final de la planificación, a diferencia que el coste que hay en asignar-habitacion 
+        (when (not (lleno ?h)) (increase (coste-total) 3))
       )
   )
 
